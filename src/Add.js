@@ -56,6 +56,7 @@ export default function Add() {
       setGalleryPermission( status == 'null' );
     }
 
+    //Asks for phone media library permission and activates pickImage function
     const askGalleryPermission = async () => {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       setGalleryPermission( status == 'granted' );
@@ -67,7 +68,7 @@ export default function Add() {
       }
     }
 
-    //Takes the picture with the camera and saves it as base64 encoded
+    //Async function for taking the picture with the camera and saving it as base64 encoded
     const snap = async () => {
       if (camera) {
         const picture = await camera.current.takePictureAsync({base64: true});
@@ -75,6 +76,7 @@ export default function Add() {
       }
     }
 
+    //Async function for choosing an image from the phone's storage and saves it as base64 encoded
     const pickImage = async () => {
       let result = await ImagePicker.launchImageLibraryAsync({
         base64: true,
@@ -92,6 +94,8 @@ export default function Add() {
 
     return (
       <View style={styles.container}>
+
+      {/* View and Button for taking a picture with the camera */}
         <View style={{ flex: 1 }}>
           { cameraPermission ? 
             (
@@ -110,6 +114,7 @@ export default function Add() {
             )}
         </View>
 
+      {/* View and Button for choosing image from phone storage */}
         <View style={{ flex: 1, justifyContent: 'center'}}>
           <View>
             { galleryPermission ? 

@@ -14,6 +14,8 @@ import WatchView from './src/WatchView';
 
 const Drawer = createDrawerNavigator();
 
+//Handles navigation
+
 export default function App() {
   return (
     <NavigationContainer>

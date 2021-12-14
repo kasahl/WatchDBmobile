@@ -20,7 +20,8 @@ export default function WatchView() {
         const database = getDatabase(app);
         
         const [ items, setItems ] = useState([]);
-
+        
+        //Gets data from Firebase database
         useEffect(() =>  {
             const itemsRef = ref(database, 'items/')
                 onValue(itemsRef, (snapshot) => {
@@ -31,6 +32,8 @@ export default function WatchView() {
 
         return (
             <View style={styles.container}>
+            
+            {/* Shows data form Firebase database in a FlatList */}
             <FlatList style={styles.list}
                 keyExtractor={(item, index) => index}
                 data={items}
@@ -38,7 +41,7 @@ export default function WatchView() {
                 <View>
                     <Text>{item.brand} {item.model}</Text>
                     <Text>{item.color}, {item.material}, {item.year}</Text>
-                    <Image source={{uri: `data:image/png;base64,${item.image}`}} style={{width: 200, height: 200}} />
+                    <Image source={{uri: `data:image/png;base64,${item.image}`}} style={{width: 200, height: 200, borderWidth: 1, borderColor: 'black'}}  />
                 </View>
                 }
             />

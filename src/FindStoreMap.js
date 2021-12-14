@@ -17,6 +17,7 @@ export default function FindStoreMap() {
 
     const [ retailers, setRetailers ] = useState([]);
 
+    //Gets user location data from GetLocation.js and then retailer location data around the user
     const setUserLocation = async () => {
         let userLocation = await GetLocation()
         setLocation({
@@ -26,6 +27,7 @@ export default function FindStoreMap() {
         fetchRetailers();
     }
 
+    //Gets data of nearby retailers (uses 'restaurants' as test data)
     const fetchRetailers = async () => {
         const userLocation = await GetLocation();
         fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${userLocation.latitude}%2C${userLocation.longitude}&rankby=${RANKBY}&type=${TYPE}&key=AIzaSyDB_uVOHN81EZbr2f5KcIhVotWJrWqkDYU`)

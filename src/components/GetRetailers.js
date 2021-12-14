@@ -4,6 +4,8 @@ import GetLocation from "./GetLocation";
 
 export default function GetRetailers() {
 
+    //NOT USED AT ALL CURRENTLY
+
     const [ retailers, setRetailers ] = useState([]);
     const TYPE = 'restaurant'
     const RANKBY = 'distance'
