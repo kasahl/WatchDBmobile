@@ -38,7 +38,7 @@ export default function WatchView() {
                 <View>
                     <Text>{item.brand} {item.model}</Text>
                     <Text>{item.color}, {item.material}, {item.year}</Text>
-                    <Image source={`data:image/png;base64,${item.image}`} style={{width: 200, height: 200, borderWidth: 1, borderColor: 'black'}} />
+                    <Image source={{uri: `data:image/png;base64,${item.image}`}} style={{width: 200, height: 200}} />
                 </View>
                 }
             />
