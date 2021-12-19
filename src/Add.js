@@ -21,7 +21,6 @@ export default function Add() {
       
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
-    const storage = getStorage(app);
       
     ref(database, 'items/')
       
@@ -89,8 +88,6 @@ export default function Add() {
         setImageBase64(result.base64);
       }
     };
-
-    console.log(imageBase64);
 
     return (
       <View style={styles.container}>

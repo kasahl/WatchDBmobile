@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, StatusBar, FlatList, Button, Image } from 'react-native';
+import { ListItem, Overlay } from 'react-native-elements';
 import{ getDatabase, push, ref, onValue}  from"firebase/database";
 
 import { initializeApp } from "firebase/app";
+import { visible } from '@jest/types/node_modules/chalk';
 
 export default function WatchView() {
 
@@ -19,8 +21,9 @@ export default function WatchView() {
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         
+        const [ visible, setVisible ] = useState(false);
         const [ items, setItems ] = useState([]);
-        
+
         //Gets data from Firebase database
         useEffect(() =>  {
             const itemsRef = ref(database, 'items/')
@@ -30,21 +33,27 @@ export default function WatchView() {
                 })
         }, []);
 
+        const toggleOverlay = () => {
+            setVisible(!visible);
+        }
+
         return (
             <View style={styles.container}>
             
-            {/* Shows data form Firebase database in a FlatList */}
-            <FlatList style={styles.list}
-                keyExtractor={(item, index) => index}
-                data={items}
-                renderItem={({ item }) =>
-                <View>
-                    <Text>{item.brand} {item.model}</Text>
-                    <Text>{item.color}, {item.material}, {item.year}</Text>
-                    <Image source={{uri: `data:image/png;base64,${item.image}`}} style={{width: 200, height: 200, borderWidth: 1, borderColor: 'black'}}  />
-                </View>
-                }
-            />
+                {/* Shows data form Firebase database in a FlatList */}
+                <FlatList style={styles.list}
+                    keyExtractor={(item, index) => index}
+                    data={items}
+                    renderItem={({ item, index }) =>
+                        <ListItem bottomDivider onPress={toggleOverlay}>
+                            <ListItem.Content>
+                                <ListItem.Title>{item.brand} {item.model}</ListItem.Title>
+                                <ListItem.Subtitle>{item.color} {item.material} {item.year}</ListItem.Subtitle>
+                                <Image source={{uri: `data:image/png;base64,${item.image}`}} style={styles.imageContainer} />
+                            </ListItem.Content>
+                        </ListItem>
+                    }
+                />
             <StatusBar style="auto" />
             </View>
         );
@@ -52,9 +61,23 @@ export default function WatchView() {
 
     const styles = StyleSheet.create({
         container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
+            flex: 1,
+            backgroundColor: '#fff',
+            alignItems: 'center',
+            justifyContent: 'center'
         },
+        list: {
+            flex: 1,
+            width: '100%',
+            backgroundColor: 'lightgray'
+        },
+        imageContainer: {
+            flex: 1,
+            justifyContent: 'center',
+            width: 100, 
+            height: 100, 
+            borderWidth: 1, 
+            borderColor: 'black',
+            backgroundColor: '#fff'
+        }
     });
