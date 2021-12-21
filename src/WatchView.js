@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, StatusBar, FlatList, Image } from 'react-native';
-import { ListItem, Overlay, Icon, Button } from 'react-native-elements';
-import{ getDatabase, push, ref, onValue}  from"firebase/database";
-import { Ionicons } from '@expo/vector-icons';
+import { View, StyleSheet, StatusBar, FlatList, Image } from 'react-native';
+import { ListItem, Button } from 'react-native-elements';
+import { getDatabase, ref, onValue}  from"firebase/database";
 
 import { initializeApp } from "firebase/app";
-import { visible } from '@jest/types/node_modules/chalk';
 
 export default function WatchView() {
 
@@ -22,7 +20,6 @@ export default function WatchView() {
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
     
-    const [ visible, setVisible ] = useState(false);
     const [ items, setItems ] = useState([]);
 
     //Gets data from Firebase database
@@ -51,7 +48,7 @@ export default function WatchView() {
                             paddingTop={2}
                             rightContent={
                                 <Button
-                                    icon={{ name: 'delete', color: 'white' }}
+                                    icon={{ name: 'delete', color: 'white', size: 32 }}
                                     buttonStyle={{ height: '100%', backgroundColor: 'red', marginTop: 2 }}
                                     onPress={() => {
                                         setItems(prevItems => prevItems.filter((_item, _Index) => _Index !== index));
@@ -61,10 +58,10 @@ export default function WatchView() {
                         >
                             <View style={ styles.listTile }>
                                 <View style={{ width: '75%' }}>
-                                    <View style={ styles.tileContent }>
+                                    <View style={ styles.tileTitle }>
                                         <ListItem.Title>{item.brand} {item.model} {index}</ListItem.Title>
                                     </View>
-                                    <View style={ styles.tileContent }>
+                                    <View style={ styles.tileSubtitle }>
                                         <ListItem.Subtitle>Case Material: {item.material}</ListItem.Subtitle>
                                         <ListItem.Subtitle>Dial Color: {item.color}</ListItem.Subtitle>
                                         <ListItem.Subtitle>Release Year: {item.year}</ListItem.Subtitle>
@@ -95,16 +92,23 @@ export default function WatchView() {
             flexDirection: 'row', 
             justifyContent: 'space-around'
         },
-        tileContent: {
+        tileTitle: {
             alignItems: 'flex-start', 
             justifyContent:'center', 
             flex: 1, 
             flexDirection:'column'
         },
+        tileSubtitle: {
+            alignItems: 'flex-start', 
+            justifyContent:'center', 
+            flex: 1, 
+            flexDirection:'column',
+            paddingLeft: 10
+        },
         imageContainer: {
             width: 100, 
             height: 100, 
-            borderWidth: 1, 
+            borderWidth: 2, 
             borderColor: 'green',
             backgroundColor: '#fff',
         }

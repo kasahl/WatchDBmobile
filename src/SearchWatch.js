@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, StatusBar, FlatList, Alert, Image } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, FlatList, Alert, Image, KeyboardAvoidingView } from 'react-native';
 import { ListItem, SearchBar, Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import{ getDatabase, }  from"firebase/database";
@@ -20,6 +20,8 @@ export default function WatchView() {
         
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
+
+    const keyboardVerticalOffset = Platform.OS === 'android' ? -185 : 0
     
     const [ filerBy, setFilterBy ] = useState('');
     const [ filterValue, setFilterValue ] = useState('');
@@ -54,10 +56,10 @@ export default function WatchView() {
                             <ListItem.Content>
                                 <View style={ styles.listTile }>
                                     <View style={{ width: '75%' }}>
-                                        <View style={ styles.tileContent }>
+                                        <View style={ styles.tileTitle }>
                                             <ListItem.Title>{item.brand} {item.model} {index}</ListItem.Title>
                                         </View>
-                                        <View style={ styles.tileContent }>
+                                        <View style={ styles.tileSubtitle }>
                                             <ListItem.Subtitle>Case Material: {item.material}</ListItem.Subtitle>
                                             <ListItem.Subtitle>Dial Color: {item.color}</ListItem.Subtitle>
                                             <ListItem.Subtitle>Release Year: {item.year}</ListItem.Subtitle>
@@ -71,7 +73,8 @@ export default function WatchView() {
                         </ListItem>
                     }
                 />
-                <View style={{ flexDirection: 'row', maxHeight:'10%', width: '100%' }}>
+                <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={keyboardVerticalOffset} width='100%' maxHeight='10%'>
+                <View style={{ flexDirection: 'row', width: '100%' }}>
                     <View style={{ flex: 5}}>
                         <SearchBar
                             placeholder="Search"
@@ -82,13 +85,15 @@ export default function WatchView() {
                         />
                     </View>
                     <View style={{ width: 67, height: '100%' }}>
-                        <Button  
+                        <Button
                             onPress={findWatch}
                             icon={<Ionicons name='search-outline' color='#fff' size={32} />}
                             buttonStyle={{ height: '100%', backgroundColor: 'green' }}
                         />
                     </View>
+                
                 </View>
+                </KeyboardAvoidingView>
             </View>        
             <StatusBar style="auto" />
         </View>
@@ -107,17 +112,24 @@ export default function WatchView() {
             flexDirection: 'row', 
             justifyContent: 'space-around'
         },
-        tileContent: {
+        tileTitle: {
             alignItems: 'flex-start', 
             justifyContent:'center', 
             flex: 1, 
             flexDirection:'column'
         },
+        tileSubtitle: {
+            alignItems: 'flex-start', 
+            justifyContent:'center', 
+            flex: 1, 
+            flexDirection:'column',
+            paddingLeft: 10
+        },
         imageContainer: {
             width: 100, 
             height: 100, 
-            borderWidth: 1, 
-            borderColor: 'black',
+            borderWidth: 2, 
+            borderColor: 'green',
             backgroundColor: '#fff'
         },
         searchContainer: {

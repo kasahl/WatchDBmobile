@@ -1,11 +1,13 @@
-import React, { useEffect, useState, useRef, Component } from 'react';
-import { Text, View, StyleSheet, StatusBar, TextInput, Button, Alert, Image } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, TextInput, Alert, Image, Dimensions, Platform, KeyboardAvoidingView } from 'react-native';
+import { Button } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
-import { getMetadata, push, ref, onValue, getDatabase, set } from 'firebase/database';
-import { getStorage } from 'firebase/storage';
+import { Ionicons } from '@expo/vector-icons';
+import { push, ref, getDatabase } from 'firebase/database';
 
 import { initializeApp } from "firebase/app";
+import { Overlay } from 'react-native-maps';
 
 export default function Add() {
 
@@ -36,6 +38,8 @@ export default function Add() {
 
   const camera = useRef(null);
     
+  const keyboardVerticalOffset = Platform.OS === 'android' ? 100 : 0
+
   //Pushes currents states into database
   const saveItem = () => {
     push(ref(database, 'items/'), {
@@ -58,14 +62,12 @@ export default function Add() {
   const askCameraPermission = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     setCameraPermission( status == 'granted' );
-    setGalleryPermission( status == 'null' );
   }
 
   //Asks for phone media library permission and activates pickImage function
   const askGalleryPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     setGalleryPermission( status == 'granted' );
-    setCameraPermission( status == 'null' );
     try {
       pickImage();
     } catch (error) {
@@ -78,6 +80,11 @@ export default function Add() {
     if (camera) {
       const picture = await camera.current.takePictureAsync({base64: true});
       setImageBase64(picture.base64);
+      try {
+        setCameraPermission(null)
+      } catch (error) {
+        console.error(error.message);
+      }
     }
   }
 
@@ -87,7 +94,7 @@ export default function Add() {
       base64: true,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      quality: 1,
+      quality: .5,
     });
 
     if (!result.cancelled) {
@@ -97,49 +104,39 @@ export default function Add() {
 
   return (
     <View>
-      <View style={{ height: '100%' }}>
-        <View style={{ backgroundColor: 'teal', alignItems: 'center'}}>
-          <Image 
-            style={{ height: 200, width: 200}} 
-            source={{uri: `data:image/gif;base64,${imageBase64}`}} 
-          />
-        </View> 
-        <View>
-          <Button onPress={askGalleryPermission} title="Choose a Picture" />
-        </View>
+      <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}>
         {/* View and Button for taking a picture with the camera */}
-        <View style={{ backgroundColor: 'lightgreen'}}>
+        <View style={{ backgroundColor: '#fff', height: '100%'}}>
           { cameraPermission ? 
             (
-              <View style={{ flex: 1, justifyContent: 'center' }}>
-                <Camera style={{ width: 200, height: 200 }} ref={camera} />
-                <View>
-                  <Button title="Take Picture" onPress={snap} />
-                </View>
+              <View style={{ alignItems: 'center', flexDirection: 'column-reverse'}}>
+                <Camera style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }} ref={camera} />
+                <Overlay style={{ backgroundColor: 'transparent', paddingBottom: 150}}>
+                  <Button onPress={snap} raised="true" buttonStyle={ styles.cameraButton } icon={<Ionicons name='camera-outline' color='green' size={24} />} />
+                </Overlay>
               </View>
             ) : (
-              <Button onPress={askCameraPermission} title="Open Camera" />
-            )}
-        </View>
-
-      {/* View and Button for choosing image from phone storage */}
-        <View style={{ backgroundColor: 'lightblue'}}>
-          <View>
-            { galleryPermission ? 
-              (
-                <View style={{ }}>
-                  <Button onPress={pickImage} title="Choose a Picture" />
+              <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={keyboardVerticalOffset} width='100%'>
+                <View style={{ alignItems: 'center' }}>
+                  <Image 
+                    source={{uri: `data:image/gif;base64,${imageBase64}`}} 
+                    style={ styles.imagePreview }
+                  />
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                    <Button onPress={askCameraPermission} title="Open Camera" buttonStyle={ styles.buttons } icon={<Ionicons name='camera-outline' color='#fff' size={24} />}/>
+                    <Button onPress={askGalleryPermission} title="Choose a Picture" buttonStyle={ styles.buttons } icon={<Ionicons name='albums-outline' color='#fff' size={24} />}/>
+                  </View>
+                  <View style={ styles.inputContainer }>
+                    <TextInput style={styles.inputField} placeholder='Brand' onChangeText={brand => setBrand(brand)} value={brand} />
+                    <TextInput style={styles.inputField} placeholder='Model' onChangeText={model => setModel(model)} value={model} />
+                    <TextInput style={styles.inputField} placeholder='Dial Color' onChangeText={color => setColor(color)} value={color} />
+                    <TextInput style={styles.inputField} placeholder='Case Material' onChangeText={material => setMaterial(material)} value={material} />
+                    <TextInput style={styles.inputField} placeholder='Release Year' onChangeText={year => setYear(year)} value={year} />
+                  </View>
+                  <Button onPress={saveItem} title="Save" buttonStyle={ styles.buttons } icon={<Ionicons name='save-outline' color='#fff' size={24} />} />
                 </View>
-              ) : ('')}
-          </View>
-        </View>
-        <View style={styles.inputContainer}>
-            <TextInput style={styles.inputField} placeholder='Brand' onChangeText={brand => setBrand(brand)} value={brand} />
-            <TextInput style={styles.inputField} placeholder='Model' onChangeText={model => setModel(model)} value={model} />
-            <TextInput style={styles.inputField} placeholder='Dial Color' onChangeText={color => setColor(color)} value={color} />
-            <TextInput style={styles.inputField} placeholder='Case Material' onChangeText={material => setMaterial(material)} value={material} />
-            <TextInput style={styles.inputField} placeholder='Release Year' onChangeText={year => setYear(year)} value={year} />
-            <Button onPress={saveItem} title="Save" />
+              </KeyboardAvoidingView>
+            )}
         </View>
       </View>
     </View>
@@ -155,17 +152,37 @@ export default function Add() {
       justifyContent: 'center',
     },
     inputContainer: {
-        flex: 1,
         padding: 10,
+        width: '100%',
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
       },
     inputField: {
         width:200,
-        borderBottomColor:'gray',
+        backgroundColor: '#fff',
+        borderColor: 'green',
         borderWidth:1,
         margin: 5,
         paddingLeft: 5,
     },
+    buttons: {
+      backgroundColor: 'green',
+      margin: 1
+    },
+    cameraButton: {
+      backgroundColor: 'lightgray', 
+      borderWidth: 2, 
+      borderColor: 'green',
+      width: 60,
+      height: 60,
+    },
+    imagePreview: {
+      width: 300, 
+      height: 300, 
+      borderWidth: 5, 
+      borderColor: 'green',
+      backgroundColor: '#fff',
+      margin: 10
+  },
   });
