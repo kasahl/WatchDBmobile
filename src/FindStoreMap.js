@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Dimensions, Button } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Button, Alert, Image } from 'react-native';
 import MapView, { Marker, Overlay } from 'react-native-maps';
+import { FAB } from 'react-native-elements';
 import * as Location from 'expo-location';
+
+
 import GetLocation from './components/GetLocation';
+
 const TYPE = 'restaurant'
 const RANKBY = 'distance'
 
@@ -32,11 +36,9 @@ export default function FindStoreMap() {
         const userLocation = await GetLocation();
         fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${userLocation.latitude}%2C${userLocation.longitude}&rankby=${RANKBY}&type=${TYPE}&key=AIzaSyDB_uVOHN81EZbr2f5KcIhVotWJrWqkDYU`)
         .then(response => response.json())
-        .then(data => {
-            setRetailers(data);
-        })
+        .then(responeJson => setRetailers(Object.values(responeJson)))
         .catch((error) => {
-            Alert.alert('Error', error);
+            Alert.alert('Error', error.message);
         });
     }
 
@@ -44,7 +46,6 @@ export default function FindStoreMap() {
         
   return (
     <View style={styles.container}>
-        <Text>Find Watch Retailers</Text>
         <MapView style={styles.map} region={location} >
             { Location.useForegroundPermissions ? 
                 (
@@ -56,13 +57,15 @@ export default function FindStoreMap() {
                         title='Your Location'
                     />
                 ) : (
-                    "sdftvgbhnj"
+                 ""
                 )
             }
         </MapView>
-        <Button 
-            onPress={setUserLocation} title="Find my location" style={{ justifyContent: 'center' }} 
-        />
+        <Overlay>
+            <Button
+                onPress={setUserLocation} title="Find my location" style={{ justifyContent: 'bottom' }} 
+            />
+        </Overlay>
     </View>
   );
 }
