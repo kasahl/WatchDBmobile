@@ -42,7 +42,7 @@ export default function Add() {
 
   //Pushes currents states into database
   const saveItem = () => {
-    push(ref(database, 'items/'), {
+    push(ref(database, 'items/'), { 
       'brand': brand.trimEnd(), 'model': model.trimEnd(), 'color': color.trimEnd(),
       'material': material.trimEnd(), 'year': year.trimEnd(), 'image': imageBase64, 
     });
@@ -76,7 +76,7 @@ export default function Add() {
   }
 
   //Async function for taking the picture with the camera and saving it as base64 encoded
-  const snap = async () => {
+  const takePicture = async () => {
     if (camera) {
       const picture = await camera.current.takePictureAsync({base64: true});
       setImageBase64(picture.base64);
@@ -112,7 +112,7 @@ export default function Add() {
               <View style={{ alignItems: 'center', flexDirection: 'column-reverse'}}>
                 <Camera style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }} ref={camera} />
                 <Overlay style={{ backgroundColor: 'transparent', paddingBottom: 150}}>
-                  <Button onPress={snap} raised="true" buttonStyle={ styles.cameraButton } icon={<Ionicons name='camera-outline' color='green' size={24} />} />
+                  <Button onPress={takePicture} raised="true" buttonStyle={ styles.cameraButton } icon={<Ionicons name='camera-outline' color='green' size={24} />} />
                 </Overlay>
               </View>
             ) : (

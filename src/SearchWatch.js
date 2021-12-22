@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, StatusBar, FlatList, Alert, Image, KeyboardAvoidingView } from 'react-native';
 import { ListItem, SearchBar, Button } from 'react-native-elements';
+import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import{ getDatabase, }  from"firebase/database";
 
 import { initializeApp } from "firebase/app";
+import { result } from 'lodash';
 
 export default function WatchView() {
 
@@ -21,9 +23,9 @@ export default function WatchView() {
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    const keyboardVerticalOffset = Platform.OS === 'android' ? -185 : 0
+    const keyboardVerticalOffset = Platform.OS === 'android' ? -220 : 0
     
-    const [ filerBy, setFilterBy ] = useState('');
+    const [ filterBy, setFilterBy ] = useState('brand');
     const [ filterValue, setFilterValue ] = useState('');
     const [ tempValue, setTempValue ] = useState('');
     const [ watchResponse, setWatchResponse ] = useState([]);
@@ -40,8 +42,10 @@ export default function WatchView() {
         })
     }
 
+    const watches = watchResponse.filter(data => data.brand === filterValue.trimEnd());
+
     //Logic for filtering from Json
-    const watches = watchResponse.filter(x => x.brand === filterValue.trimEnd());
+    //const watches = watchResponse.filter(data => data.brand === filterValue.trimEnd());
 
     return (
         <View>
@@ -73,7 +77,18 @@ export default function WatchView() {
                         </ListItem>
                     }
                 />
-                <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={keyboardVerticalOffset} width='100%' maxHeight='10%'>
+                <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={keyboardVerticalOffset} width='100%' maxHeight={200} >
+                <Picker
+                    style={{ margin: 10 }}
+                    selectedValue={filterBy}
+                    onValueChange={(itemValue, itemIndex) => setFilterBy(itemValue)}
+                >
+                    <Picker.Item label="Brand" value="brand" />
+                    <Picker.Item label="Model" value="model" />
+                    <Picker.Item label="Case Material" value="material" />
+                    <Picker.Item label="Dial Color" value="color" />
+                    <Picker.Item label="Release Year" value="year" />
+                </Picker>
                 <View style={{ flexDirection: 'row', width: '100%' }}>
                     <View style={{ flex: 5}}>
                         <SearchBar
@@ -84,7 +99,7 @@ export default function WatchView() {
                             round="true"
                         />
                     </View>
-                    <View style={{ width: 67, height: '100%' }}>
+                    <View style={{ width: 67, height: 67 }}>
                         <Button
                             onPress={findWatch}
                             icon={<Ionicons name='search-outline' color='#fff' size={32} />}

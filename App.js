@@ -1,15 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text } from 'react-native';
 import 'react-native-gesture-handler';
-import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Header, Icon } from 'react-native-elements';
+import { Header } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 
-
-import HomeScreen from './src/HomeScreen';
 import Add from './src/Add';
 import FindStoreMap from './src/FindStoreMap';
 import WatchView from './src/WatchView';

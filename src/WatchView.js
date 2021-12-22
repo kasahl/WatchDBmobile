@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, StatusBar, FlatList, Image } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
-import { getDatabase, ref, onValue}  from"firebase/database";
+import { getDatabase, ref, onValue, remove, firebase}  from"firebase/database";
 
 import { initializeApp } from "firebase/app";
 
-export default function WatchView() {
+export default function WatchView( brand, model, color, material, year, imageBase64) {
 
     const firebaseConfig = {
         apiKey: "AIzaSyDeDMA8a4xmgiED51iipi9BJm1dM-IK4aE",
@@ -21,6 +21,12 @@ export default function WatchView() {
     const database = getDatabase(app);
     
     const [ items, setItems ] = useState([]);
+    const [ idData, setIdData ] = useState({});
+
+    const updateItems = {
+        'brand': brand, 'model': model, 'color': color,
+      'material': material, 'year': year, 'image': imageBase64, 
+    }
 
     //Gets data from Firebase database
     useEffect(() =>  {
@@ -31,16 +37,12 @@ export default function WatchView() {
             })
     }, []);
 
-    const deleteItem = () => {
-        console.log(index)
-    }
-
     return (
         <View>
         
             {/* Shows data form Firebase database in a FlatList */}
             <FlatList
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item, index) => index}
                 data={items}
                 renderItem={({ item, index }) =>
                     <ListItem.Content>
@@ -52,7 +54,9 @@ export default function WatchView() {
                                     buttonStyle={{ height: '100%', backgroundColor: 'red', marginTop: 2 }}
                                     onPress={() => {
                                         setItems(prevItems => prevItems.filter((_item, _Index) => _Index !== index));
-                                     }}
+                                        console.log()
+                                        return remove(ref(database, 'item/'))
+                                    }}
                                 />
                             }
                         >
