@@ -1,25 +1,19 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, TextInput, Alert, Image, Dimensions, Platform, KeyboardAvoidingView } from 'react-native';
+import { View, TextInput, Alert, Image, Dimensions, Platform, KeyboardAvoidingView } from 'react-native';
 import { Button } from 'react-native-elements';
+import { Overlay } from 'react-native-maps';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { push, ref, getDatabase } from 'firebase/database';
+import styles from './components/StyleComponent';
+import FirebaseConfig from './components/FirebaseConfig';
 
 import { initializeApp } from "firebase/app";
-import { Overlay } from 'react-native-maps';
 
 export default function Add() {
 
-  const firebaseConfig = {
-      apiKey: "AIzaSyDeDMA8a4xmgiED51iipi9BJm1dM-IK4aE",
-      authDomain: "watchdb-a0222.firebaseapp.com",
-      databaseURL: "https://watchdb-a0222-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "watchdb-a0222",
-      storageBucket: "watchdb-a0222.appspot.com",
-      messagingSenderId: "782456172187",
-      appId: "1:782456172187:web:0b7eb98bae565330d7e03e"
-  };
+  const firebaseConfig = {FirebaseConfig};
     
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
@@ -42,6 +36,9 @@ export default function Add() {
 
   //Pushes currents states into database
   const saveItem = () => {
+    if ( brand == 0 ){
+      Alert.alert('Attention', 'Fill all input fields')
+    }
     push(ref(database, 'items/'), { 
       'brand': brand.trimEnd(), 'model': model.trimEnd(), 'color': color.trimEnd(),
       'material': material.trimEnd(), 'year': year.trimEnd(), 'image': imageBase64, 
@@ -142,47 +139,3 @@ export default function Add() {
     </View>
   );
 }
-
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    inputContainer: {
-        padding: 10,
-        width: '100%',
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-    inputField: {
-        width:200,
-        backgroundColor: '#fff',
-        borderColor: 'green',
-        borderWidth:1,
-        margin: 5,
-        paddingLeft: 5,
-    },
-    buttons: {
-      backgroundColor: 'green',
-      margin: 1
-    },
-    cameraButton: {
-      backgroundColor: 'lightgray', 
-      borderWidth: 2, 
-      borderColor: 'green',
-      width: 60,
-      height: 60,
-    },
-    imagePreview: {
-      width: 300, 
-      height: 300, 
-      borderWidth: 5, 
-      borderColor: 'green',
-      backgroundColor: '#fff',
-      margin: 10
-  },
-  });

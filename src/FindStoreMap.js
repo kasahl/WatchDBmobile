@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, View, Dimensions, Alert } from 'react-native';
+import { TextInput, View } from 'react-native';
 import MapView, { Overlay } from 'react-native-maps';
 import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
+import styles from './components/StyleComponent';
 
 import GetLocation from './components/GetLocation';
 
@@ -25,7 +26,11 @@ export default function FindStoreMap() {
             ...location, latitude: userLocation.latitude,
             longitude: userLocation.longitude,
         });
-        fetchRetailersUser();
+        try {
+            fetchRetailersUser();
+        } catch (error) {
+            console.error(error.message);
+        }
     }
 
     //Gets location data of entered address, for some reason throws all entered addresses to Russia or Turkey
@@ -35,6 +40,7 @@ export default function FindStoreMap() {
         .then(responeJson => {
             const latitiude = responeJson.results[0].geometry.location.lat;
             const longitude = responeJson.results[0].geometry.location.lat;
+            console.log(latitiude, longitude)
             setLocation({
                 latitude: latitiude,
                 longitude: longitude,
@@ -50,11 +56,11 @@ export default function FindStoreMap() {
 
     //Gets data of nearby retailers (uses 'store' because there is none for 'watch retailers')
     const fetchRetailersUser = () => {
-        fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude}${location.longitude}&radius=2000&type=store&key=AIzaSyDB_uVOHN81EZbr2f5KcIhVotWJrWqkDYU`)
+        fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.latitude}%20${location.longitude}&radius=2000&type=store&key=AIzaSyDB_uVOHN81EZbr2f5KcIhVotWJrWqkDYU`)
         .then(response => response.json())
         .then(responeJson => setRetailers(responeJson.results))
         .catch((error) => {
-            Alert.alert('Error', error.message);
+            Error.error('Error', error.message);
         });
     }
         
@@ -76,43 +82,19 @@ export default function FindStoreMap() {
                 <Ionicons name='person' color='red'  size={32} />
             </MapView.Marker>
         </MapView>
-        <Overlay>
-            <View style={{ flexDirection: 'row' }}>
-                <TextInput placeholder='Find Address' onChangeText={address => setAddress(address)} value={address} style={ styles.inputField } />
-                <Button 
-                    onPress={findAddress} buttonStyle={ styles.buttons } icon={<Ionicons name='search-outline' color='#fff' size={24} />}
+        <View style={{ flexDirection: 'column-reverse', alignItems:'center'}}>
+            <Overlay>
+                <View style={{ flexDirection: 'row' }}>
+                    <TextInput placeholder='Find Address' onChangeText={address => setAddress(address)} value={address} style={ styles.inputField } />
+                    <Button 
+                        onPress={findAddress} buttonStyle={ styles.buttons } icon={<Ionicons name='search-outline' color='#fff' size={24} />}
+                    />
+                </View>
+                <Button
+                    onPress={setUserLocation} title="Find My Location" buttonStyle={ styles.buttons } icon={<Ionicons name='location-outline' color='#fff' size={24} />}
                 />
-            </View>
-            <Button
-                onPress={setUserLocation} title="Find My Location" buttonStyle={ styles.buttons } icon={<Ionicons name='location-outline' color='#fff' size={24} />}
-            />
-        </Overlay>
+            </Overlay>
+        </View>
     </View>
   );
 }
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-    },
-    map: {
-        flex: 1,
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-      },
-      inputField: {
-        width: 150,
-        backgroundColor: '#fff',
-        borderColor: 'green',
-        borderWidth:1,
-        margin: 1,
-        paddingLeft: 5,
-    },
-    buttons: {
-        backgroundColor: 'green',
-        margin: 1
-      },
-  });

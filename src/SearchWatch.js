@@ -1,27 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, StatusBar, FlatList, Alert, Image, KeyboardAvoidingView } from 'react-native';
+import React, { useState } from 'react';
+import { View, StatusBar, FlatList, Alert, Image, KeyboardAvoidingView } from 'react-native';
 import { ListItem, SearchBar, Button } from 'react-native-elements';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
-import{ getDatabase, }  from"firebase/database";
-
-import { initializeApp } from "firebase/app";
-import { result } from 'lodash';
+import styles from './components/StyleComponent';
 
 export default function WatchView() {
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDeDMA8a4xmgiED51iipi9BJm1dM-IK4aE",
-        authDomain: "watchdb-a0222.firebaseapp.com",
-        databaseURL: "https://watchdb-a0222-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "watchdb-a0222",
-        storageBucket: "watchdb-a0222.appspot.com",
-        messagingSenderId: "782456172187",
-        appId: "1:782456172187:web:0b7eb98bae565330d7e03e"
-    };
-        
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
 
     const keyboardVerticalOffset = Platform.OS === 'android' ? -220 : 0
     
@@ -42,10 +26,8 @@ export default function WatchView() {
         })
     }
 
-    const watches = watchResponse.filter(data => data.brand === filterValue.trimEnd());
-
     //Logic for filtering from Json
-    //const watches = watchResponse.filter(data => data.brand === filterValue.trimEnd());
+    const watches = watchResponse.filter(data => data.brand === filterValue.trimEnd());
 
     return (
         <View>
@@ -61,7 +43,7 @@ export default function WatchView() {
                                 <View style={ styles.listTile }>
                                     <View style={{ width: '75%' }}>
                                         <View style={ styles.tileTitle }>
-                                            <ListItem.Title>{item.brand} {item.model} {index}</ListItem.Title>
+                                            <ListItem.Title>{item.brand} {item.model}</ListItem.Title>
                                         </View>
                                         <View style={ styles.tileSubtitle }>
                                             <ListItem.Subtitle>Case Material: {item.material}</ListItem.Subtitle>
@@ -114,42 +96,3 @@ export default function WatchView() {
         </View>
     );
 }
-
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            backgroundColor: '#fff',
-            alignItems: 'center',
-            justifyContent: 'center'
-        },
-        listTile: {
-            width: '100%', 
-            flexDirection: 'row', 
-            justifyContent: 'space-around'
-        },
-        tileTitle: {
-            alignItems: 'flex-start', 
-            justifyContent:'center', 
-            flex: 1, 
-            flexDirection:'column'
-        },
-        tileSubtitle: {
-            alignItems: 'flex-start', 
-            justifyContent:'center', 
-            flex: 1, 
-            flexDirection:'column',
-            paddingLeft: 10
-        },
-        imageContainer: {
-            width: 100, 
-            height: 100, 
-            borderWidth: 2, 
-            borderColor: 'green',
-            backgroundColor: '#fff'
-        },
-        searchContainer: {
-            flex: 1,
-            flexDirection: 'row',
-            margin: 10,
-        }
-    });

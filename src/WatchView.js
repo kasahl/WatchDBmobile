@@ -1,32 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, StatusBar, FlatList, Image } from 'react-native';
+import { View, StatusBar, FlatList, Image } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
-import { getDatabase, ref, onValue, remove, firebase}  from"firebase/database";
+import { getDatabase, ref, onValue, remove }  from"firebase/database";
+import styles from './components/StyleComponent';
+import FirebaseConfig from './components/FirebaseConfig';
 
 import { initializeApp } from "firebase/app";
 
-export default function WatchView( brand, model, color, material, year, imageBase64) {
+export default function WatchView() {
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDeDMA8a4xmgiED51iipi9BJm1dM-IK4aE",
-        authDomain: "watchdb-a0222.firebaseapp.com",
-        databaseURL: "https://watchdb-a0222-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "watchdb-a0222",
-        storageBucket: "watchdb-a0222.appspot.com",
-        messagingSenderId: "782456172187",
-        appId: "1:782456172187:web:0b7eb98bae565330d7e03e"
-    };
+    const firebaseConfig = {FirebaseConfig};
     
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
     
     const [ items, setItems ] = useState([]);
-    const [ idData, setIdData ] = useState({});
-
-    const updateItems = {
-        'brand': brand, 'model': model, 'color': color,
-      'material': material, 'year': year, 'image': imageBase64, 
-    }
 
     //Gets data from Firebase database
     useEffect(() =>  {
@@ -63,7 +51,7 @@ export default function WatchView( brand, model, color, material, year, imageBas
                             <View style={ styles.listTile }>
                                 <View style={{ width: '75%' }}>
                                     <View style={ styles.tileTitle }>
-                                        <ListItem.Title>{item.brand} {item.model} {index}</ListItem.Title>
+                                        <ListItem.Title>{item.brand} {item.model}</ListItem.Title>
                                     </View>
                                     <View style={ styles.tileSubtitle }>
                                         <ListItem.Subtitle>Case Material: {item.material}</ListItem.Subtitle>
@@ -83,37 +71,3 @@ export default function WatchView( brand, model, color, material, year, imageBas
         </View>
     );
 }
-
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            backgroundColor: '#fff',
-            alignItems: 'flex-start',
-            justifyContent: 'center'
-        },
-        listTile: {
-            width: '100%', 
-            flexDirection: 'row', 
-            justifyContent: 'space-around'
-        },
-        tileTitle: {
-            alignItems: 'flex-start', 
-            justifyContent:'center', 
-            flex: 1, 
-            flexDirection:'column'
-        },
-        tileSubtitle: {
-            alignItems: 'flex-start', 
-            justifyContent:'center', 
-            flex: 1, 
-            flexDirection:'column',
-            paddingLeft: 10
-        },
-        imageContainer: {
-            width: 100, 
-            height: 100, 
-            borderWidth: 2, 
-            borderColor: 'green',
-            backgroundColor: '#fff',
-        }
-    });
